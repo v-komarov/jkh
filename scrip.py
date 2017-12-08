@@ -12,8 +12,8 @@ import time
 
 HOUSE = 'html/house/'
 SOURCE_FILE = 'source/krasnoyarsk.xlsm'
-#LIST_IP = ['80.240.33.209/29', '80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
-LIST_IP = ['80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
+LIST_IP = ['80.240.33.209/29', '80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
+#LIST_IP = ['80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
 
 
 
@@ -21,6 +21,7 @@ class ScripeHouse():
 
     def __init__(self):
         self.ip = "begin"
+        self.new = "begin"
         self.list_ip = LIST_IP
         self.df = pd.read_excel(SOURCE_FILE, sheet_name=0, index_col=None)
         self.request_ip = 0
@@ -31,12 +32,19 @@ class ScripeHouse():
 
         if self.request_ip >= 11:
 
+            while self.new == self.ip:
+                self.ip = random.choice(self.list_ip)
+
+            self.new = self.ip
+
             self.ip = random.choice(self.list_ip)
             os.system("/sbin/ifconfig ens160 %s" % self.ip)
             os.system("/usr/sbin/route add default gw 80.240.33.214")
             print "sleep"
             time.sleep(60)
             self.request_ip = 0
+
+
 
 
 
