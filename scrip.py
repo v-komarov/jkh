@@ -37,7 +37,6 @@ class ScripeHouse():
 
             self.new = self.ip
 
-            self.ip = random.choice(self.list_ip)
             os.system("/sbin/ifconfig ens160 %s" % self.ip)
             os.system("/usr/sbin/route add default gw 80.240.33.214")
             print "sleep"
