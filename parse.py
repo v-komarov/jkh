@@ -4,19 +4,25 @@ import os.path
 import os
 from bs4 import BeautifulSoup as bs
 import pandas as pd
+import argparse
 
 HOUSE = 'html/house/'
-MANAGES = 'data/manages.xls'
+MANAGES = 'data/'
 
 data = []
 
 
 class ParseHouse():
 
-    def __init__(self):
+    def __init__(self,args):
         self.files = os.listdir(HOUSE)
+        self.outfile = MANAGES+args.outfile
+        self.html = HOUSE+args.dir
 
     def getmanageid(self):
+
+        ###
+        row = 1
 
         for file in self.files:
             f = open("%s%s" % (HOUSE,file),"r")
@@ -38,12 +44,30 @@ class ParseHouse():
                         'address':address
                     })
 
+                    print "row : %s" % row
+
+                    row+=1
+
+
         df = pd.DataFrame(data)
-        df.to_excel(MANAGES, index=None)
+        df.to_excel(self.outfile, index=None)
         print df.head()
 
 
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Извлечение информации управляющей компании из html формата')
+    parser.add_argument('outfile', help='Название файла результата')
+    parser.add_argument('dir', help='Подкаталог html файлов')
+
+    return parser.parse_args()
+
+
+
 if __name__ == '__main__':
-    ph = ParseHouse()
+
+    args = parse_args()
+
+    ph = ParseHouse(args)
     ph.getmanageid()
 
