@@ -15,9 +15,9 @@ data = []
 class ParseHouse():
 
     def __init__(self,args):
-        self.files = os.listdir(HOUSE)
         self.outfile = MANAGES+args.outfile
         self.html = HOUSE+args.dir
+        self.files = os.listdir(self.html)
 
     def getmanageid(self):
 
@@ -25,7 +25,7 @@ class ParseHouse():
         row = 1
 
         for file in self.files:
-            f = open("%s%s" % (HOUSE,file),"r")
+            f = open("%s/%s" % (self.html,file),"r")
             bsobj = bs(f.read(),"lxml")
             f.close()
 
