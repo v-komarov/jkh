@@ -5,9 +5,12 @@ import os
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 import argparse
+import config
 
-HOUSE = 'html/house/'
-MANAGES = 'data/'
+
+
+HOUSE = config.HOUSE
+MANAGES = config.MANAGES
 
 data = []
 

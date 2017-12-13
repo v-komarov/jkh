@@ -6,24 +6,28 @@ import os.path
 import os
 import random
 import time
+import argparse
+import config
 
 
 ### Скрайпинг сайта (реформа ЖКХ)
 
-HOUSE = 'html/house/'
-SOURCE_FILE = 'source/krasnoyarsk.xlsm'
-LIST_IP = ['80.240.33.209/29', '80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
-#LIST_IP = ['80.240.33.210/29', '80.240.33.211/29', '80.240.33.212/29', '80.240.33.213/29',]
-
+HOUSE = config.HOUSE
+SOURCE_DIR = config.SOURCE_DIR
+LIST_IP = config.LIST_IP
+GW = config.GW
+INTERFACE = config.INTERFACE
 
 
 class ScripeHouse():
 
-    def __init__(self):
+    def __init__(self,args):
+
+        self.source = SOURCE_DIR+args.source
         self.ip = "begin"
         self.new = "begin"
         self.list_ip = LIST_IP
-        self.df = pd.read_excel(SOURCE_FILE, sheet_name=0, index_col=None)
+        self.df = pd.read_excel(self.source, sheet_name=args.sheet, index_col=None)
         self.request_ip = 0
 
 
@@ -37,8 +41,8 @@ class ScripeHouse():
 
             self.new = self.ip
 
-            os.system("/sbin/ifconfig ens160 %s" % self.ip)
-            os.system("/usr/sbin/route add default gw 80.240.33.214")
+            os.system("/sbin/ifconfig %s %s" % (INTERFACE,self.ip))
+            os.system("/usr/sbin/route add default gw %s" % GW)
             print "sleep"
             time.sleep(60)
             self.request_ip = 0
@@ -74,7 +78,24 @@ class ScripeHouse():
 
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='Сбор данных в формате html')
+    parser.add_argument('data', choices=['house','manager'], help='Вид данных, которые будут собираться')
+    parser.add_argument('source', help='Файл - источник данных')
+    parser.add_argument('sheet', type=int, help='Номер листа в таблице')
+
+
+    return parser.parse_args()
+
+
+
+
 
 if __name__ == '__main__':
-    sc = ScripeHouse()
-    sc.getdata()
+
+    args = parse_args()
+
+    if args.data == "house":
+        sc = ScripeHouse(args)
+        sc.getdata()
+
